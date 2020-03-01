@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+        <div class="jumbotron">
+          <h2 class="masthead-subheading mb-0">My List</h2>
+          <div class="row">
+            <a href="{% url 'event-create'%}" class="btn btn-primary btn-xl rounded-pill mt-5">
+              create event
+            </a>
+          </div>
+          <div class="row">
+        	{% for event in events %}
+          <div class="col-md-6 col-lg-4">
+            <!-- {% if request.user == event.user %} -->
+            <div class="card mb-3">
+             <div class="card-body">
+        			 <a href="{% url 'event-detail' event.id%}">
+        				<h3>
+         					{{event.title}}
+                </h3>
+                <h4>{{event.datetime}}</h4>
+         					<h4>
+         						{{event.location}}
+         					</h4>
+         			</a>
+               </div>
+           </div>
+           <!-- {% endif %} -->
+          </div>
+        	{% endfor %}
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-circle-1 bg-circle"></div>
+<div class="bg-circle-2 bg-circle"></div>
+<div class="bg-circle-3 bg-circle"></div>
+<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}

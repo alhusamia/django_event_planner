@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+        <div class="jumbotron">
+          <h2 class="masthead-subheading mb-0">Event Detail</h2>
+
+		<h1> Title: {{event.title}}</h1>
+    <h3> Descriptions: {{event.description}}</h3>
+    <h3>Location: {{event.location}}</h3>
+    <h3>Time: {{event.datetime}}</h3>
+    <h3>Seats: {{event.seats}}</h3>
+    <h3>counter: {{event.counter}}</h3>
+      {% if request.user == event.user %}
+    <a href="{% url 'event-update' event.id%}" class="btn btn-primary btn-xl rounded-pill mt-5">
+      update event
+    </a>
+    {% for booking in bookings%}
+    {%endfor%}
+    {% endif %}
+    {% if not request.user == event.user %}
+    <a href="{% url 'reserve-event' event.id  %}" class="btn btn-primary btn-xl rounded-pill mt-5">
+      Booking
+    </a>
+    <h3>{{bookings.reserved_num}}</h3>
+  {% endif %}
+  </div>
+</div>
+</div>
+<div class="bg-circle-1 bg-circle"></div>
+<div class="bg-circle-2 bg-circle"></div>
+<div class="bg-circle-3 bg-circle"></div>
+<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}

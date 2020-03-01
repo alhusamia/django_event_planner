@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="container">
+    <div >
+    <form class="search-box form-inline my-2 my-lg-0 mx-8 " action="{% url 'event-list' %}">
+      <input class="rounded-pill search-input form-control" type="search" placeholder="Search Events" aria-label="Search" name="q">
+      <button class="btn cool my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+  </div>
+  <div class="masthead-content">
+    <div class="container">
+      <div class="jumbotron">
+      <div  style="float:right">
+      <a href="{% url 'event-create'%}"><i class="fa fa-plus-circle xl" style="font-size:60px;color:#ffaaa5"></i></a>
+      </div>
+          <h2 class="masthead-subheading mb-0">Event List</h2>          
+          <div class="row">
+        	{% for event in events %}
+          <div class="p-3 col-12">
+            <div class="card mb-3">
+             <div class="card-body">
+        			 <a href="{% url 'event-detail' event.id%}">
+        				<h3>
+         					{{event.title}}
+                </h3>
+                <h4>{{event.datetime}}</h4>
+         					<h4>
+         						{{event.location}}
+         					</h4>
+         			</a>
+               </div>
+           </div>
+          </div>
+        	{% endfor %}
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-circle-1 bg-circle"></div>
+<div class="bg-circle-2 bg-circle"></div>
+<div class="bg-circle-3 bg-circle"></div>
+<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}
