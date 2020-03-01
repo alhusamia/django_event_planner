@@ -11,19 +11,40 @@
     <h3> Descriptions: {{event.description}}</h3>
     <h3>Location: {{event.location}}</h3>
     <h3>Time: {{event.datetime}}</h3>
-    <h3>Seats: {{event.get_seat_left}}</h3>    
+    <h3>Seats: {{event.get_seat_left}}</h3>
       {% if request.user == event.user %}
     <a href="{% url 'event-update' event.id%}" class="btn btn-primary btn-xl rounded-pill mt-5">
       update event
-    </a>
-    {% for booking in bookings%}
-    {%endfor%}
+    </a><br>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">booking id</th>
+      <th scope="col">User Name</th>
+      <th scope="col">Seats</th>
+    </tr>
+  </thead>
+  {% for booking in bookings%}
+  <tbody>
+    <tr>
+      <th scope="row">{{booking.id}}</th>
+      <td>{{booking.visitor}}</td>
+      <td>{{booking.reserved_num}}</td>
+    </tr>
+  </tbody>
+  {% endfor %}
+</table>
     {% endif %}
     {% if not request.user == event.user %}
+    {% if event.get_seat_left == 0 %}
+    <a href="#" class="btn btn-primary btn-xl rounded-pill mt-5">
+      Full
+    </a>
+    {% else %}
     <a href="{% url 'reserve-event' event.id  %}" class="btn btn-primary btn-xl rounded-pill mt-5">
       Booking
     </a>
-    <h3>{{bookings.reserved_num}}</h3>
+  {% endif %}
   {% endif %}
   </div>
 </div>

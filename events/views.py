@@ -117,7 +117,7 @@ def reserve_event(request,event_id):
             booking.visitor = request.user
             booking.event = event
             seats = event.get_seat_left()
-            if booking.reserved_num < seats:
+            if booking.reserved_num <= seats:
                 booking.save()
                 messages.success(request, "Successfully Reserved")
                 return redirect('event-detail', event_id)
