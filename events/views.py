@@ -7,7 +7,7 @@ from django.contrib import messages
 from .models import Event,Booking
 from .forms import EventForm,ReserveForm
 from django.db.models import Q
-
+from django.utils import timezone
 def home(request):
     return render(request, 'home.html')
 
@@ -29,10 +29,17 @@ def my_list(request):
             'events': events,
             }
     return render(request,'mylist.html',context)
-
+#======= My booking  ========#
+def my_booking(request):
+    bookings = Booking.objects.filter(event__datetime__lt=datetime.now())
+    context={
+    'bookings':bookings
+    }
+    return render(request,'past_booking.html',context)
 #======= Event list ========#
 def eventlist(request):
-    events  = Event.objects.filter(datetime__gt =datetime.now())
+    events = Event.objects.filter(datetime__gt =datetime.now())
+
     query = request.GET.get("q")
     if query:
         events = events.filter(
@@ -71,7 +78,7 @@ def event_create(request):
 #======= Event Detail ========#
 def event_detail(request, event_id):
     event = Event.objects.get(id=event_id)
-    bookings = Booking.objects.all()
+    bookings = Booking.objects.filter(event=event)
     context = {
         "event": event,
         'bookings':bookings

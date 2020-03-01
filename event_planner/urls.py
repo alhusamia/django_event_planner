@@ -28,6 +28,7 @@ urlpatterns = [
     path('', include('events.urls')),
     path('event/list/', views.eventlist, name='event-list'),
     path('event/my_list/', views.my_list, name='my-list'),
+    path('event/my_booking/', views.my_booking, name='my-booking'),
     path('event/dashboard/', views.dashboard, name='dashboard'),
     #path('event/<int:event_id>/detail/booking', views.Booking, name='booking'),
     path('event/<int:event_id>/detail/reserving/', views.reserve_event, name='reserve-event'),

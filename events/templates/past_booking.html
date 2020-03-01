@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+      <div class="jumbotron">
+          <h2 class="masthead-subheading mb-0">My Bookings</h2>
+          <div class="row">
+            {% for booking in bookings %}
+            <div class="p-3 col-12">
+              <div class="card mb-3">
+               <div class="card-body-mine">
+
+                  <h3>
+                    {{booking.event.title}}
+                  </h3>
+                  <h4>{{booking.event.datetime}}</h4>
+                    <h4>
+                      {{booking.event.location}}
+                    </h4>
+
+                 </div>
+             </div>
+            </div>
+            {% endfor %}
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bg-circle-1 bg-circle"></div>
+<div class="bg-circle-2 bg-circle"></div>
+<div class="bg-circle-3 bg-circle"></div>
+<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}
