@@ -10,16 +10,13 @@ class Event(models.Model):
     datetime = models.DateTimeField()
     seats = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    def counter(self):
-        bookings = self.booking_set.all()
-        num = 0
-        for n in bookings:            
-            num += n.reserved_num
-        return num
+    def booked_seats(self):
+        return sum(self.bookings.all().values_list('reserved_num', flat=True))
 
-
+    def get_seat_left(self):
+        return (self.seats- self.booked_seats())
 
 class Booking(models.Model):
     visitor=  models.ForeignKey(User, on_delete=models.CASCADE)
     reserved_num = models.PositiveIntegerField()
-    event= models.ForeignKey(Event, on_delete=models.CASCADE)
+    event= models.ForeignKey(Event, on_delete=models.CASCADE,related_name='bookings')

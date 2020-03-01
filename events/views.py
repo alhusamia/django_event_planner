@@ -105,19 +105,24 @@ def event_update(request, event_id):
 
 # ================reserve an event==================
 def reserve_event(request,event_id):
-
+    if request.user.is_anonymous:
+        return redirect('login')
     event =Event.objects.get(id=event_id)
-    form = ReserveForm(instance=event)
+    form = ReserveForm()
 
     if request.method == "POST":
-        form = ReserveForm(request.POST, request.FILES,instance=event)
+        form = ReserveForm(request.POST, request.FILES)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.visitor = request.user
-            booking.event = event_id
-            booking.save()
-            messages.success(request, "Successfully Reserved")
-            return redirect('event-detail', event.id)
+            booking.event = event
+            seats = event.get_seat_left()
+            if booking.reserved_num < seats:
+                booking.save()
+                messages.success(request, "Successfully Reserved")
+                return redirect('event-detail', event_id)
+            else:
+                messages.warning(request,'Not Enough seats!')
 
 
     context = {

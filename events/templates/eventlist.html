@@ -5,7 +5,7 @@
   <div class="container">
     <div >
     <form class="search-box form-inline my-2 my-lg-0 mx-8 " action="{% url 'event-list' %}">
-      <input class="rounded-pill search-input form-control" type="search" placeholder="Search Events" aria-label="Search" name="q">
+      <input class="rounded-pill search-input form-control-nice" type="search" placeholder="Search Events" aria-label="Search" name="q">
       <button class="btn cool my-2 my-sm-0" type="submit">Search</button>
     </form>
   </div>
@@ -16,7 +16,7 @@
       <div  style="float:right">
       <a href="{% url 'event-create'%}"><i class="fa fa-plus-circle xl" style="font-size:60px;color:#ffaaa5"></i></a>
       </div>
-          <h2 class="masthead-subheading mb-0">Event List</h2>          
+          <h2 class="masthead-subheading mb-0">Event List</h2>
           <div class="row">
         	{% for event in events %}
           <div class="p-3 col-12">

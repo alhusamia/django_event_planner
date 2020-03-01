@@ -11,8 +11,7 @@
     <h3> Descriptions: {{event.description}}</h3>
     <h3>Location: {{event.location}}</h3>
     <h3>Time: {{event.datetime}}</h3>
-    <h3>Seats: {{event.seats}}</h3>
-    <h3>counter: {{event.counter}}</h3>
+    <h3>Seats: {{event.get_seat_left}}</h3>    
       {% if request.user == event.user %}
     <a href="{% url 'event-update' event.id%}" class="btn btn-primary btn-xl rounded-pill mt-5">
       update event
