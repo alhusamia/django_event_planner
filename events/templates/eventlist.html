@@ -21,12 +21,12 @@
         	{% for event in events %}
           <div class="p-3 col-12">
             <div class="card mb-3">
-             <div class="card-body">
+             <div class="card-body ">
         			 <a href="{% url 'event-detail' event.id%}">
         				<h3>
          					{{event.title}}
                 </h3>
-                <h4>{{event.datetime}}</h4>
+                <h4>{{event.date}}</h4>
          					<h4>
          						{{event.location}}
          					</h4>

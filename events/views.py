@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.views import View
 from datetime import datetime
-from .forms import UserSignup, UserLogin
+from .forms import UserSignup,UserLogin,UserFrom,EventForm,ReserveForm
 from django.contrib import messages
-from .models import Event,Booking
-from .forms import EventForm,ReserveForm
+from .models import Event,Booking,Follow
 from django.db.models import Q
 from django.utils import timezone
 def home(request):
@@ -22,6 +22,9 @@ def dashboard(request):
 #======= My list ========#
 def my_list(request):
     event = Event.objects.all()
+    if request.user.is_anonymous:
+        return redirect('signin')
+
     events = Event.objects.filter(user = request.user)
     if request.user:
         events.user = request.user
@@ -31,14 +34,19 @@ def my_list(request):
     return render(request,'mylist.html',context)
 #======= My booking  ========#
 def my_booking(request):
-    bookings = Booking.objects.filter(event__datetime__lt=datetime.now())
+    bookings = Booking.objects.filter(event__date__lt=datetime.today())
+    if request.user.is_anonymous:
+        return redirect('signin')
+
     context={
     'bookings':bookings
     }
     return render(request,'past_booking.html',context)
 #======= Event list ========#
 def eventlist(request):
-    events = Event.objects.filter(datetime__gt =datetime.now())
+    events = Event.objects.filter(date__gt =datetime.today())
+    if request.user.is_anonymous:
+        return redirect('signin')
 
     query = request.GET.get("q")
     if query:
@@ -78,16 +86,24 @@ def event_create(request):
 #======= Event Detail ========#
 def event_detail(request, event_id):
     event = Event.objects.get(id=event_id)
+    if request.user.is_anonymous:
+        return redirect('signin')
+
     bookings = Booking.objects.filter(event=event)
+    follow = Follow.objects.filter(following=event)
     context = {
         "event": event,
-        'bookings':bookings
+        'bookings':bookings,
+        'follow':follow
     }
     return render(request, 'event_detail.html', context)
 
 #======= Event Update ========#
 def event_update(request, event_id):
     event = Event.objects.get(id=event_id)
+    if request.user.is_anonymous:
+        return redirect('signin')
+
     form = EventForm(instance=event)
     if not request.user == event.user:
         return redirect('event-list')
@@ -104,11 +120,14 @@ def event_update(request, event_id):
 
     }
     return render(request, 'updatedetails.html', context)
-#======= Booking ========#
-# class Booking(request,event_id):
-#     event = Event.objects.get(id=event_id)
-#     booking = Booking(event=event,user=request.user)
-#     booking.save()
+#======= Event Delete ========#
+def Event_delete(request, event_id):
+    event_obj = Event.objects.get(id=event_id)
+    if request.user.is_anonymous:
+        return redirect('signin')
+
+    event_obj.delete()
+    return redirect('event-list')
 
 # ================reserve an event==================
 def reserve_event(request,event_id):
@@ -138,6 +157,35 @@ def reserve_event(request,event_id):
     }
     return render(request, 'index.html', context)
 
+#======= update User ========#
+def user_update(request):
+
+    if request.user.is_anonymous:
+        return redirect('signin')
+
+    form = UserForm(instance=request.user)
+    if request.method == "POST":
+        form = UserForm(request.POST,instance=request.user )
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User details updated.')
+            return redirect('event-list')
+
+    context = {
+        "event": event,
+        "form":form,
+
+    }
+    return render(request, 'update_user.html', context)
+
+#========== follow =============#
+def follow(request,event_id):
+    event = Event.objects.get(id=event_id)
+    if request.user.is_anonymous:
+        return redirect('user-login')
+    follow = Follow(following=event,follower=request.user)
+    follow.save()
+    return redirect('event-detail',event_id)
 class Signup(View):
     form_class = UserSignup
     template_name = 'signup.html'
@@ -154,7 +202,7 @@ class Signup(View):
             user.save()
             messages.success(request, "You have successfully signed up.")
             login(request, user)
-            return redirect("home")
+            return redirect("event-list")
         messages.warning(request, form.errors)
         return redirect("signup")
 
@@ -178,7 +226,7 @@ class Login(View):
             if auth_user is not None:
                 login(request, auth_user)
                 messages.success(request, "Welcome Back!")
-                return redirect('dashboard')
+                return redirect('event-list')
             messages.warning(request, "Wrong email/password combination. Please try again.")
             return redirect("login")
         messages.warning(request, form.errors)

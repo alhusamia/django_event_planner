@@ -5,16 +5,32 @@
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
+          {% if not request.user == event.user %}
+          {% if follow.following == event %}
+          <div style="float:left">
+            <a href="{% url 'follow' event.id%}" class="btn btn-primary btn rounded-pill ">Followed </a>
+          </div>
+          {% else %}
+          <div style="float:left">
+            <a href="{% url 'follow' event.id%}" class="btn btn-primary btn rounded-pill ">Follow: {{event.user}} </a>
+          </div>
+          {% endif%}
+          {% endif%}
           <h2 class="masthead-subheading mb-0">Event Detail</h2>
 
-		<h1> Title: {{event.title}}</h1>
+		<h2> Title: {{event.title}}</h2>
     <h3> Descriptions: {{event.description}}</h3>
     <h3>Location: {{event.location}}</h3>
-    <h3>Time: {{event.datetime}}</h3>
+    <h3>Date: {{event.date}}</h3>
+    <h3>Time: {{event.time}}</h3>
     <h3>Seats: {{event.get_seat_left}}</h3>
+    <h3>Organizer: {{event.user}}</h3>
       {% if request.user == event.user %}
     <a href="{% url 'event-update' event.id%}" class="btn btn-primary btn-xl rounded-pill mt-5">
-      update event
+      Update event
+    </a><br>
+    <a href="{% url 'event-delete' event.id%}" class="btn btn-danger btn-xl rounded-pill mt-5">
+      Delete event
     </a><br>
     <table class="table">
   <thead>

@@ -7,6 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ml-auto">
         {% if request.user.is_anonymous %}
+
         <li class="nav-item">
           <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
         </li>
@@ -15,10 +16,16 @@
         </li>
         {% else %}
         <li class="nav-item">
+          <a class="nav-link" href="{% url 'my-booking'%}">My Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'my-list'%}">My Event List</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="dashboard">{{ request.user }}</a>
+          <a class="nav-link" href="user-update">{{ request.user }}</a>
         </li>
         {% endif %}
       </ul>

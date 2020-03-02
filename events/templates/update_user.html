@@ -5,11 +5,12 @@
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
-        <h1 style="color:white">{{request.user}}</h1><br><br>
-        <!-- <a class = "btn btn-primary btn-xl rounded-pill mt-5" href="{% url 'my-list'%}">My Event List</a><br> -->
-        <a class = "btn btn-primary btn-xl rounded-pill mt-5" href="{% url 'event-list'%}">Event Lists</a><br>
-        <!-- <a class = "btn btn-primary btn-xl rounded-pill mt-5" href="{% url 'my-booking'%}">My Bookings</a><br> -->
-
+          <h2 class="masthead-subheading mb-0">Update</h2>
+          <form action="{% url 'user-update' %}" method="POST">
+            {% csrf_token %}
+            {{form|crispy}}
+            <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Update">
+          </form>
       </div>
     </div>
   </div>

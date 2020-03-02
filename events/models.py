@@ -7,9 +7,10 @@ class Event(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField()
     location = models.CharField(max_length=120)
-    datetime = models.DateTimeField()
+    date = models.DateField(null=True,blank=True)
+    time = models.TimeField(null=True,blank=True)
     seats = models.IntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="events")
     def booked_seats(self):
         return sum(self.bookings.all().values_list('reserved_num', flat=True))
 
@@ -20,3 +21,7 @@ class Booking(models.Model):
     visitor=  models.ForeignKey(User, on_delete=models.CASCADE)
     reserved_num = models.PositiveIntegerField()
     event= models.ForeignKey(Event, on_delete=models.CASCADE,related_name='bookings')
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+    following = models.ForeignKey(Event, on_delete=models.CASCADE)
