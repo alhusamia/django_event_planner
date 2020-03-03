@@ -6,10 +6,11 @@
     <div class="container">
         <div class="jumbotron">
           <h2 class="masthead-subheading mb-0">Update</h2>
-          <form action="{% url 'user-update' %}" method="POST">
+          <form action="{% url 'profile' %}" method="POST">
             {% csrf_token %}
-            {{form|crispy}}
-            <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Update">
+            {{ user_form|crispy }}
+            {{ profile_form|crispy }}
+            <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Save changes">
           </form>
       </div>
     </div>

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.views import View
 from datetime import datetime
-from .forms import UserSignup,UserLogin,UserFrom,EventForm,ReserveForm
+from .forms import UserSignup,UserLogin,UserForm,EventForm,ReserveForm,ProfileForm
 from django.contrib import messages
-from .models import Event,Booking,Follow
+from .models import Event,Profile, Booking
 from django.db.models import Q
 from django.utils import timezone
 def home(request):
@@ -23,7 +24,7 @@ def dashboard(request):
 def my_list(request):
     event = Event.objects.all()
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     events = Event.objects.filter(user = request.user)
     if request.user:
@@ -36,7 +37,7 @@ def my_list(request):
 def my_booking(request):
     bookings = Booking.objects.filter(event__date__lt=datetime.today())
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     context={
     'bookings':bookings
@@ -46,7 +47,7 @@ def my_booking(request):
 def eventlist(request):
     events = Event.objects.filter(date__gt =datetime.today())
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     query = request.GET.get("q")
     if query:
@@ -66,7 +67,7 @@ def eventlist(request):
 def event_create(request):
     form = EventForm()
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     if request.method == "POST":
         form = EventForm(request.POST, request.FILES or None)
@@ -86,23 +87,28 @@ def event_create(request):
 #======= Event Detail ========#
 def event_detail(request, event_id):
     event = Event.objects.get(id=event_id)
+    user = event.user
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     bookings = Booking.objects.filter(event=event)
-    follow = Follow.objects.filter(following=event)
+    # follow = Follow.objects.filter(following=event)
     context = {
         "event": event,
         'bookings':bookings,
-        'follow':follow
+        'user':user
     }
     return render(request, 'event_detail.html', context)
 
 #======= Event Update ========#
+
+
+
+
 def event_update(request, event_id):
     event = Event.objects.get(id=event_id)
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     form = EventForm(instance=event)
     if not request.user == event.user:
@@ -124,7 +130,7 @@ def event_update(request, event_id):
 def Event_delete(request, event_id):
     event_obj = Event.objects.get(id=event_id)
     if request.user.is_anonymous:
-        return redirect('signin')
+        return redirect('login')
 
     event_obj.delete()
     return redirect('event-list')
@@ -145,6 +151,13 @@ def reserve_event(request,event_id):
             seats = event.get_seat_left()
             if booking.reserved_num <= seats:
                 booking.save()
+                send_mail(
+                'Detail Booking:',
+                f"The number of Ticket {{booking.reserved_num}}  The Booker was {{booking.visitor}}",
+                'tt0170712@gmail.com',
+                [booking.visitor.email],
+                fail_silently=False,
+                )
                 messages.success(request, "Successfully Reserved")
                 return redirect('event-detail', event_id)
             else:
@@ -156,36 +169,52 @@ def reserve_event(request,event_id):
         'event':event
     }
     return render(request, 'index.html', context)
-
-#======= update User ========#
-def user_update(request):
-
-    if request.user.is_anonymous:
-        return redirect('signin')
-
-    form = UserForm(instance=request.user)
-    if request.method == "POST":
-        form = UserForm(request.POST,instance=request.user )
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'User details updated.')
-            return redirect('event-list')
-
-    context = {
-        "event": event,
-        "form":form,
-
+#=============Profile User ========#
+def profile_user(request,user_id):
+    profile = Profile.objects.get(user_id = user_id)
+    context={
+    'profile':profile
     }
-    return render(request, 'update_user.html', context)
+    return render(request,'profile_user.html',context)
+#======= update User ========#
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.set_password(user.password)
+            user.save()
+            profile_form.save()
+            login(request, user)
+            messages.success(request,('Your profile was successfully updated!'))
+            return redirect('event-list')
+        else:
+            messages.error(request,('Please correct the error below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    context={
+    'user_form': user_form,
+    'profile_form': profile_form,
+    }
+    return render(request, 'profile.html', context)
+#========== follow =============#
+def follow(request, user_id):
+    if request.user.is_anonymous:
+        return redirect('login')
+    user = User.objects.get(id=user_id)
+    profile = Profile.objects.get(user=user)
+    profile.follower.add(request.user.profile)
+    profile.save()
+    print(profile.follower)
+    messages.success(request, ('His profile was successfully Followed!'))
+    return redirect ('event-list')
 
 #========== follow =============#
-def follow(request,event_id):
-    event = Event.objects.get(id=event_id)
-    if request.user.is_anonymous:
-        return redirect('user-login')
-    follow = Follow(following=event,follower=request.user)
-    follow.save()
-    return redirect('event-detail',event_id)
+
+
+
 class Signup(View):
     form_class = UserSignup
     template_name = 'signup.html'

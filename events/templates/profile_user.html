@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+        <div class="jumbotron">
+          <h2 class="masthead-subheading mb-0">Profile</h2>
+          {% if request.user.is_authenticated and not request.user == profile.user%}
+          <div style="float:left">
+            <a href="{% url 'follow' user.id %}" class="btn btn-primary btn rounded-pill "> Follow </a>
+          </div>
+          {% endif %}
+          <h3>{{profile.user.username}}</h3>
+          <h3>{{profile.bio}}</h3>
+          <h3>{{profile.birth_date}}</h3>
+      </div>
+    </div>
+  </div>
+  <form  action="{% url 'profile' %}">
+    {% if request.user.is_authenticated and request.user == profile.user%}
+
+    <button class="btn cool my-2 my-sm-0" type="submit">update profile</button>
+
+    {% endif %}
+  </form>
+  <div class="bg-circle-1 bg-circle"></div>
+  <div class="bg-circle-2 bg-circle"></div>
+  <div class="bg-circle-3 bg-circle"></div>
+  <div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}

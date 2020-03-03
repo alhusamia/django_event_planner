@@ -6,17 +6,13 @@
     <div class="container">
         <div class="jumbotron">
           {% if not request.user == event.user %}
-          {% if follow.following == event %}
+
           <div style="float:left">
-            <a href="{% url 'follow' event.id%}" class="btn btn-primary btn rounded-pill ">Followed </a>
+            <a href="{% url 'profile-user' user.id %}" class="btn btn-primary btn rounded-pill "> {{event.user}} </a>
           </div>
-          {% else %}
-          <div style="float:left">
-            <a href="{% url 'follow' event.id%}" class="btn btn-primary btn rounded-pill ">Follow: {{event.user}} </a>
-          </div>
+
           {% endif%}
-          {% endif%}
-          <h2 class="masthead-subheading mb-0">Event Detail</h2>
+          <h2 class="masthead-subheading mb-0 text2" >Event Detail</h2>
 
 		<h2> Title: {{event.title}}</h2>
     <h3> Descriptions: {{event.description}}</h3>

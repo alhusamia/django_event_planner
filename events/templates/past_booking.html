@@ -5,18 +5,18 @@
   <div class="masthead-content">
     <div class="container">
       <div class="jumbotron">
-          <h2 class="masthead-subheading mb-0">My Bookings</h2>
+          <h2 class="masthead-subheading mb-0 text2" >My Bookings</h2>
           <div class="row">
             {% for booking in bookings %}
             <div class="p-3 col-12">
               <div class="card mb-3">
-               <div class="card-body-mine">
+               <div class="card-body card-stile">
 
-                  <h3>
+                  <h3 class='text1'>
                     {{booking.event.title}}
                   </h3>
-                  <h4>{{booking.event.datetime}}</h4>
-                    <h4>
+                  <h4 class='text1'>{{booking.event.datetime}}</h4>
+                    <h4 class='text1'>
                       {{booking.event.location}}
                     </h4>
 

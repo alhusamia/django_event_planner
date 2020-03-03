@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Event,Booking
+from .models import Event,Booking,Profile
 
 class UserSignup(forms.ModelForm):
     class Meta:
@@ -11,7 +11,7 @@ class UserSignup(forms.ModelForm):
         'password': forms.PasswordInput(),
         }
 
-class UserFrom(forms.ModelForm):
+class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email' ,'password']
@@ -19,13 +19,18 @@ class UserFrom(forms.ModelForm):
         widgets={
         'password': forms.PasswordInput(),
         }
-
-class UserLogin(forms.Form):
-    username = forms.CharField(required=True)
-    password = forms.CharField(required=True, widget=forms.PasswordInput())
-
 class Date(forms.DateInput):
     input_type ="date"
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'location', 'birth_date']
+        widgets={
+            'birth_date':Date(),
+
+        }
+
+
 
 class Time(forms.TimeInput):
     input_type='time'
@@ -39,6 +44,9 @@ class EventForm(forms.ModelForm):
             'time':Time()
         }
 
+class UserLogin(forms.Form):
+    username = forms.CharField(required=True)
+    password = forms.CharField(required=True, widget=forms.PasswordInput())
 class ReserveForm(forms.ModelForm):
     class Meta:
         model = Booking

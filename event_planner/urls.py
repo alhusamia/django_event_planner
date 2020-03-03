@@ -30,25 +30,26 @@ urlpatterns = [
     path('event/list/', views.eventlist, name='event-list'),
     path('event/my_list/', views.my_list, name='my-list'),
     path('event/my_booking/', views.my_booking, name='my-booking'),
-    path('event/user_update/', views.user_update, name='user-update'),
+    path('profile/', views.update_profile, name='profile'),
+    path('profile_user/<int:user_id>/', views.profile_user, name='profile-user'),
 
     path('event/<int:event_id>/detail/reserving/', views.reserve_event, name='reserve-event'),
 
     path('event/create/', views.event_create, name='event-create'),
     path('event/<int:event_id>/detail/', views.event_detail, name='event-detail'),
-    path('event/<int:event_id>/detail/follow', views.follow, name='follow'),
+    path('profile_user/<int:user_id>/follow', views.follow, name='follow'),
     path('event/<int:event_id>/update/', views.event_update, name='event-update'),
     path('event/<int:event_id>/delete/',views.Event_delete ,name='event-delete'),
 
 
 
     path('api/list', secondview.EventListView.as_view(), name="api-list"),
-    path('api/booking_list', secondview.BookingListView.as_view(), name="api-booking-list"),
-    path('api/Specificbooking/<str:user_username>', secondview.SpecificListView.as_view(), name="api-user-list"),
+    path('api/booking_list/', secondview.BookingListView.as_view(), name="api-booking-list"),
+    path('api/Specificbooking/<str:user_username>/', secondview.SpecificListView.as_view(), name="api-user-list"),
     path('api/booking/<int:event_id>/create/', secondview.CreateBookingView.as_view(), name="create-booking"),
     path('api/bookingdetail/<int:event_id>/',secondview.BookingDetailView.as_view(), name='booking-detail'),
     path('register/', secondview.Register.as_view(), name="register"),
-    path('api/<int:event_id>/create', secondview.CreateEventView.as_view(), name="create-event"),
+    path('api/create/', secondview.CreateEventView.as_view(), name="create-event"),
     path('api/<int:event_id>/update/', secondview.UpdateEventView.as_view(), name="update-event"),
     path('api/login/', TokenObtainPairView.as_view(), name='api-login'),
 ]

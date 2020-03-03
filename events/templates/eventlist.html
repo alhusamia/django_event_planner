@@ -12,22 +12,22 @@
   </div>
   <div class="masthead-content">
     <div class="container">
-      <div class="jumbotron">
+      <div class="jumbotron  ">
       <div  style="float:right">
-      <a href="{% url 'event-create'%}"><i class="fa fa-plus-circle xl" style="font-size:60px;color:#ffaaa5"></i></a>
+      <a href="{% url 'event-create'%}" ><i class="fa fa-plus-circle xl " style="font-size:60px;color:#ffaaa5;"></i></a>
       </div>
           <h2 class="masthead-subheading mb-0">Event List</h2>
           <div class="row">
         	{% for event in events %}
           <div class="p-3 col-12">
             <div class="card mb-3">
-             <div class="card-body ">
+             <div class="card-body card-stile ">
         			 <a href="{% url 'event-detail' event.id%}">
-        				<h3>
+        				<h3 class='text1'>
          					{{event.title}}
                 </h3>
-                <h4>{{event.date}}</h4>
-         					<h4>
+                <h4 class='text1'>{{event.date}}</h4>
+         					<h4 class='text1'>
          						{{event.location}}
          					</h4>
          			</a>

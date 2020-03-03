@@ -109,9 +109,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )    
+    )
 }
-
+ALLOWED_HOSTS = []
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'tt0170712@gmail.com'
+EMAIL_HOST_PASSWORD = 'test@123456'
+EMAIL_PORT = 587
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 

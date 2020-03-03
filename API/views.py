@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from rest_framework.generics import ListAPIView , CreateAPIView,RetrieveUpdateAPIView ,RetrieveAPIView
+from rest_framework.generics import ListAPIView , CreateAPIView,RetrieveUpdateAPIView ,RetrieveAPIView,DestroyAPIView
 from .serializers import  ListSerializer, BookingListSerializer, UserSerializer, RegisterSerializer, EventCreateSerializer, UpdateEventSerializer, BookingCreateSerializer, BookingDetailSerializer
-from events.models import Event,Booking
+from events.models import Event,Booking,Profile
 from .permissions import IsAny
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -33,12 +33,13 @@ class Register(CreateAPIView):
 
 class CreateEventView(CreateAPIView):
     serializer_class = EventCreateSerializer
+    permission_classes = [IsAuthenticated]
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, event_id=self.kwargs['event_id'])
+        serializer.save(user=self.request.user)
 
 class UpdateEventView(RetrieveUpdateAPIView):
 	queryset = Event.objects.all()
-	serializer_class = UpdateEventSerializer
+	serializer_class = EventCreateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'event_id'
 ##########################################################################################################
@@ -53,3 +54,19 @@ class BookingDetailView(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'event_id'
     permission_classes = [IsAny]
+
+# class FollowingListView(ListAPIView):
+#     queryset = Profile.objects.all()
+#     serializer_class = FollowingListSerializer
+#     permission_classes = [IsAuthenticated, IsAdminUser]
+
+# class CreateFollowingView(CreateAPIView):#FOREIGN KEY constraint failed
+#     serializer_class = FollowingCreateSerializer
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user, user_id=self.kwargs['user_id'])
+#
+# class DeleteFollowingView(DestroyAPIView):#not tested
+#     queryset = Profile.objects.all()
+#     serializer_class = FollowingListSerializer
+#     lookup_field = 'id'
+#     lookup_url_kwarg = 'user_id'
