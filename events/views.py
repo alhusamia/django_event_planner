@@ -35,7 +35,7 @@ def my_list(request):
     return render(request,'mylist.html',context)
 #======= My booking  ========#
 def my_booking(request):
-    bookings = Booking.objects.filter(event__date__lt=datetime.today())
+    bookings = Booking.objects.all()
     if request.user.is_anonymous:
         return redirect('login')
 

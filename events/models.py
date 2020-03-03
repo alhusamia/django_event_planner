@@ -41,5 +41,6 @@ class Booking(models.Model):
     visitor=  models.ForeignKey(User, on_delete=models.CASCADE)
     reserved_num = models.PositiveIntegerField()
     event= models.ForeignKey(Event, on_delete=models.CASCADE,related_name='bookings')
-# class Follow(models.Model):
-#     follower = models.
+
+class Follow(models.Model):
+    follower = models.ManyToManyField(Profile , related_name="followed_by",symmetrical=False,default=None)
