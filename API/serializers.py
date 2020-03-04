@@ -15,7 +15,7 @@ class ListSerializer(serializers.ModelSerializer):
 class BookingListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['visitor']
+        fields = ['visitor','event']
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
