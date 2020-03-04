@@ -38,12 +38,13 @@ urlpatterns = [
     path('event/create/', views.event_create, name='event-create'),
     path('event/<int:event_id>/detail/', views.event_detail, name='event-detail'),
     path('profile_user/<int:user_id>/follow', views.follow, name='follow'),
+    path('profile_user/<int:user_id>/unfollow', views.unfollow, name='unfollow'),
     path('event/<int:event_id>/update/', views.event_update, name='event-update'),
     path('event/<int:event_id>/delete/',views.Event_delete ,name='event-delete'),
 
 
 
-    path('api/list', secondview.EventListView.as_view(), name="api-list"),
+    path('api/list/', secondview.EventListView.as_view(), name="api-list"),
     path('api/booking_list/', secondview.BookingListView.as_view(), name="api-booking-list"),
     path('api/Specificbooking/<str:user_username>/', secondview.SpecificListView.as_view(), name="api-user-list"),
     path('api/booking/<int:event_id>/create/', secondview.CreateBookingView.as_view(), name="create-booking"),
@@ -52,6 +53,10 @@ urlpatterns = [
     path('api/create/', secondview.CreateEventView.as_view(), name="create-event"),
     path('api/<int:event_id>/update/', secondview.UpdateEventView.as_view(), name="update-event"),
     path('api/login/', TokenObtainPairView.as_view(), name='api-login'),
+
+    path('api/followerlist/', secondview.FollowingListView.as_view(), name="api-followers-list"),
+    path('api/createfollowing/', secondview.CreateFollowingView.as_view(), name="create-following"),
+    path('api/deletefollowing/<int:follower_id>/', secondview.DeleteFollowingView.as_view(), name="delete-following"),
 ]
 
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView , CreateAPIView,RetrieveUpdateAPIView ,RetrieveAPIView,DestroyAPIView
-from .serializers import  ListSerializer, BookingListSerializer, UserSerializer, RegisterSerializer, EventCreateSerializer, UpdateEventSerializer, BookingCreateSerializer, BookingDetailSerializer
-from events.models import Event,Booking,Profile
+from .serializers import  ListSerializer, BookingListSerializer, UserSerializer, RegisterSerializer, EventCreateSerializer, UpdateEventSerializer, BookingCreateSerializer, BookingDetailSerializer, FollowingListSerializer, FollowingCreateSerializer
+from events.models import Event,Booking,Profile,Follow
 from .permissions import IsAny
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -18,7 +18,7 @@ class EventListView(ListAPIView):
 class BookingListView(ListAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingListSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated,  IsAny]
 
 class SpecificListView(ListAPIView):
     serializer_class = UserSerializer
@@ -29,7 +29,7 @@ class SpecificListView(ListAPIView):
 
 class Register(CreateAPIView):
     serializer_class = RegisterSerializer
-    permission_classes = [IsAny]
+    # permission_classes = [IsAny]
 
 class CreateEventView(CreateAPIView):
     serializer_class = EventCreateSerializer
@@ -53,20 +53,23 @@ class BookingDetailView(RetrieveAPIView):
     serializer_class = BookingDetailSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'event_id'
-    permission_classes = [IsAny]
+    # permission_classes = [IsAny]
 
-# class FollowingListView(ListAPIView):
-#     queryset = Profile.objects.all()
-#     serializer_class = FollowingListSerializer
-#     permission_classes = [IsAuthenticated, IsAdminUser]
+####################################views-API#######################################################################
+class FollowingListView(ListAPIView):
+    queryset = Follow.objects.all()
+    serializer_class = FollowingListSerializer
+    permission_classes = [IsAuthenticated , IsAny]
 
-# class CreateFollowingView(CreateAPIView):#FOREIGN KEY constraint failed
-#     serializer_class = FollowingCreateSerializer
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user, user_id=self.kwargs['user_id'])
-#
-# class DeleteFollowingView(DestroyAPIView):#not tested
-#     queryset = Profile.objects.all()
-#     serializer_class = FollowingListSerializer
-#     lookup_field = 'id'
-#     lookup_url_kwarg = 'user_id'
+class CreateFollowingView(CreateAPIView):
+    serializer_class = FollowingCreateSerializer
+    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save(follower=self.request.user)
+        
+class DeleteFollowingView(DestroyAPIView):
+    queryset = Follow.objects.all()
+    serializer_class = FollowingListSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+    lookup_url_kwarg = 'follower_id'

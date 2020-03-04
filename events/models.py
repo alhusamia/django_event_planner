@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save , pre_save
+from django.template.defaultfilters import slugify
 from django.dispatch import receiver
 
 
@@ -43,4 +44,28 @@ class Booking(models.Model):
     event= models.ForeignKey(Event, on_delete=models.CASCADE,related_name='bookings')
 
 class Follow(models.Model):
-    follower = models.ManyToManyField(Profile , related_name="followed_by",symmetrical=False,default=None)
+    follower = models.ForeignKey(User , related_name="follower",on_delete=models.CASCADE)
+    following =models.ForeignKey(User , related_name="following",on_delete=models.CASCADE)
+##########################################################################################################################
+    slug = models.SlugField(blank=True)
+def create_slug(instance, new_slug=None):
+    slug = slugify(instance.following)
+    if new_slug is not None:
+        slug = new_slug
+    qs = Follow.objects.filter(slug=slug)
+    if qs.exists():
+        try:
+            int(slug[-1])
+            if "-" in slug:
+                slug_list = slug.split("-")
+                new_slug = "%s%s" % (slug[:-len(slug_list[-1])], int(slug_list[-1]) + 1)
+            else:
+                new_slug = "%s-1" % (slug)
+        except:
+            new_slug = "%s-1" % (slug)
+        return create_slug(instance, new_slug=new_slug)
+    return slug
+@receiver(pre_save, sender=Follow)
+def generate_slug(instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug=create_slug(instance)

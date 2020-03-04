@@ -8,17 +8,17 @@
           {% if not request.user == event.user %}
 
           <div style="float:left">
-            <a href="{% url 'profile-user' user.id %}" class="btn btn-primary btn rounded-pill "> {{event.user}} </a>
+            <a href="{% url 'profile-user' user.id %}" class="btn btn-primary btn rounded-pill profile"> {{event.user}} </a>
           </div>
 
           {% endif%}
           <h2 class="masthead-subheading mb-0 text2" >Event Detail</h2>
 
-		<h2> Title: {{event.title}}</h2>
-    <h3> Descriptions: {{event.description}}</h3>
-    <h3>Location: {{event.location}}</h3>
-    <h3>Date: {{event.date}}</h3>
-    <h3>Time: {{event.time}}</h3>
+		<h2>  {{event.title}}</h2>
+    <h3>  {{event.description}}</h3>
+    <h3> ({{event.location}})</h3>
+    <h3> {{event.date}}</h3>
+    <h3> {{event.time}}</h3>
     <h3>Seats: {{event.get_seat_left}}</h3>
     <h3>Organizer: {{event.user}}</h3>
       {% if request.user == event.user %}
@@ -27,20 +27,22 @@
     </a><br>
     <a href="{% url 'event-delete' event.id%}" class="btn btn-danger btn-xl rounded-pill mt-5">
       Delete event
-    </a><br>
+    </a><br><br>
     <table class="table">
-  <thead>
+  <thead class="thead-dark text2">
     <tr>
-      <th scope="col">booking id</th>
       <th scope="col">User Name</th>
+      <th scope="col">Fisrt Name</th>
+      <th scope="col">Last Name</th>
       <th scope="col">Seats</th>
     </tr>
   </thead>
   {% for booking in bookings%}
   <tbody>
     <tr>
-      <th scope="row">{{booking.id}}</th>
-      <td>{{booking.visitor}}</td>
+      <th scope="row">{{booking.visitor}}</th>
+      <td>{{booking.visitor.first_name}}</td>
+      <td>{{booking.visitor.last_name}}</td>
       <td>{{booking.reserved_num}}</td>
     </tr>
   </tbody>
@@ -49,7 +51,7 @@
     {% endif %}
     {% if not request.user == event.user %}
     {% if event.get_seat_left == 0 %}
-    <a href="#" class="btn btn-primary btn-xl rounded-pill mt-5">
+    <a  class="btn btn-primary-full btn-xl rounded-pill mt-5">
       Full
     </a>
     {% else %}

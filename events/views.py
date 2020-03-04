@@ -6,7 +6,7 @@ from django.views import View
 from datetime import datetime
 from .forms import UserSignup,UserLogin,UserForm,EventForm,ReserveForm,ProfileForm
 from django.contrib import messages
-from .models import Event,Profile, Booking
+from .models import Event,Profile, Booking,Follow
 from django.db.models import Q
 from django.utils import timezone
 def home(request):
@@ -101,10 +101,6 @@ def event_detail(request, event_id):
     return render(request, 'event_detail.html', context)
 
 #======= Event Update ========#
-
-
-
-
 def event_update(request, event_id):
     event = Event.objects.get(id=event_id)
     if request.user.is_anonymous:
@@ -126,11 +122,25 @@ def event_update(request, event_id):
 
     }
     return render(request, 'updatedetails.html', context)
+
+#======= His Event  ========#
+def his_event(request,user_id):
+     if request.user.is_anonymous:
+         return redirect('login')
+
+     events = Event.objects.filter(user = user_id)
+     events.user = request.user
+     context = {
+        'events': events,
+             }
+     return render(request,'profile_user.html',context)
 #======= Event Delete ========#
 def Event_delete(request, event_id):
     event_obj = Event.objects.get(id=event_id)
     if request.user.is_anonymous:
         return redirect('login')
+    if not request.user == event_obj.user:
+        return redirect('event-list')
 
     event_obj.delete()
     return redirect('event-list')
@@ -153,7 +163,7 @@ def reserve_event(request,event_id):
                 booking.save()
                 send_mail(
                 'Detail Booking:',
-                f"The number of Ticket {{booking.reserved_num}}  The Booker was {{booking.visitor}}",
+                "The number of Ticket %d  The Booker was %s "%({{booking.reserved_num}},{{booking.visitor}}),
                 'tt0170712@gmail.com',
                 [booking.visitor.email],
                 fail_silently=False,
@@ -172,8 +182,10 @@ def reserve_event(request,event_id):
 #=============Profile User ========#
 def profile_user(request,user_id):
     profile = Profile.objects.get(user_id = user_id)
+    events = Event.objects.filter(user_id=user_id)
     context={
-    'profile':profile
+    'profile':profile,
+    'events':events
     }
     return render(request,'profile_user.html',context)
 #======= update User ========#
@@ -201,18 +213,26 @@ def update_profile(request):
     return render(request, 'profile.html', context)
 #========== follow =============#
 def follow(request, user_id):
-    if request.user.is_anonymous:
-        return redirect('login')
     user = User.objects.get(id=user_id)
-    profile = Profile.objects.get(user=user)
-    profile.follower.add(request.user.profile)
-    profile.save()
-    print(profile.follower)
+    if request.user.is_anonymous :
+        return redirect('login')
+    if Follow.objects.filter(follower=request.user,following=user).count()>0:
+        messages.warning(request, "You have already followed this user")
+        return redirect('profile-user',user_id)
+    follow= Follow(follower=request.user,following=user)
+    follow.save()
     messages.success(request, ('His profile was successfully Followed!'))
     return redirect ('event-list')
 
-#========== follow =============#
-
+#===========Unfollow============#
+def unfollow(request,user_id):
+    user = User.objects.get(id=user_id)
+    if request.user.is_anonymous :
+        return redirect('login')
+    if  request.user.is_staff or request.user == user:
+        unfollow = Follow.objects.filter(follower=request.user,following=user).delete()
+        messages.warning(request, "You have already Unfollowed this user")
+        return redirect('profile-user',user_id)
 
 
 class Signup(View):

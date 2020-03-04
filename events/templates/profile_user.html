@@ -4,32 +4,54 @@
 <header class="masthead text-center text-white">
   <div class="masthead-content">
     <div class="container">
-        <div class="jumbotron">
+        <div class="jumbotron" >
           <h2 class="masthead-subheading mb-0">Profile</h2>
-          <!-- {% if request.user.is_authenticated and not request.user == profile.user%}
+          {% if request.user.is_authenticated and not request.user == profile.user%}
           <div style="float:left">
-            <a href="{% url 'follow' user.id %}" class="btn btn-primary btn rounded-pill "> Follow </a>
+            <a href="{% url 'follow' profile.user.id %}" class="btn btn-primary btn rounded-pill "> Follow </a>
           </div>
-          {% endif %} -->
+          {% endif %}
           <h3>{{profile.user.username}}</h3>
           <h3>{{profile.bio}}</h3>
           <h3>{{profile.birth_date}}</h3>
           {% if request.user == profile.user %}
-          <button class="btn cool my-2 my-sm-0" type="submit"><a href="{% url 'my-list'%}">My Event List</a></button>
+          <a href="{% url 'my-list'%}"><button class="btn cool my-2 my-sm-0 cool" >My Event List</button></a>
           {% endif %}
+          {% if request.user.is_authenticated and not request.user == profile.user%}
+          <div class="jumbotron">
+            <h2 class="masthead-subheading mb-0 text2" > {{profile.user.username}} List</h2>
+            <div class="row">
+          	{% for event in events %}
+            <div class="col-md-6 col-lg-4">
+              <div class="card mb-3">
+               <div class="card-body card-stile">
+          			 <a href="{% url 'event-detail' event.id%}">
+          				<h3 class='text1'>
+           					{{event.title}}
+                  </h3>
+                  <h4 class='text1'>{{event.date}}</h4>
+           					<h4 class='text1'>
+           						{{event.location}}
+           					</h4>
+           			</a>
+                 </div>
+             </div>
+            </div>
+          	{% endfor %}
       </div>
     </div>
+    {% endif %}
   </div>
   <form  action="{% url 'profile' %}">
     {% if request.user.is_authenticated and request.user == profile.user%}
-z
+
     <button class="btn cool my-2 my-sm-0" type="submit">update profile</button>
 
     {% endif %}
   </form>
-  <div class="bg-circle-1 bg-circle"></div>
-  <div class="bg-circle-2 bg-circle"></div>
-  <div class="bg-circle-3 bg-circle"></div>
-  <div class="bg-circle-4 bg-circle"></div>
+  <div class="bg-circle-1  bg-circle z"></div>
+  <div class="bg-circle-2 bg-circle z"></div>
+  <div class="bg-circle-3 bg-circle z"></div>
+  <div class="bg-circle-4 bg-circle z"></div>
 </header>
 {% endblock %}

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from events.models import Event,Booking,Profile
+from events.models import Event,Booking,Follow
 from django.contrib.auth.models import User
 from rest_framework.filters import SearchFilter
 class UserSerializer(serializers.ModelSerializer):
@@ -15,7 +15,7 @@ class ListSerializer(serializers.ModelSerializer):
 class BookingListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ["visitor","reserved_num","event"]
+        fields = ['visitor']
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
@@ -40,29 +40,25 @@ class UpdateEventSerializer(serializers.ModelSerializer):
 class BookingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ["reserved_num"]
+        fields = ['reserved_num']
 
 
 class BookingDetailSerializer(serializers.ModelSerializer):
      class Meta:
         model = Booking
-        fields = ["visitor","reserved_num",]
+        fields = ['visitor','reserved_num',]
 
+###########################################################################
 
 class AddedBySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username']
-
 class FollowingListSerializer(serializers.ModelSerializer):
-    followers_names=serializers.SerializerMethodField()
     class Meta:
-        model = Profile
-        fields = ['followers_names']
-    def get_followers_names(self, obj):
-        return "%s"%(obj.user.username)
-
-class FollowingCreateSerializer(serializers.ModelSerializer):#FOREIGN KEY constraint failed
+        model = Follow
+        fields = ['slug']
+class FollowingCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = ['follower']
+        model = Follow
+        exclude = [ 'follower']
