@@ -163,7 +163,7 @@ def reserve_event(request,event_id):
                 booking.save()
                 send_mail(
                 'Detail Booking:',
-                "The number of Ticket %d  The Booker was %s "%({{booking.reserved_num}},{{booking.visitor}}),
+                f"The number of Ticket {{booking.reserved_num}}  The Booker was {{booking.visitor}}",
                 'tt0170712@gmail.com',
                 [booking.visitor.email],
                 fail_silently=False,
